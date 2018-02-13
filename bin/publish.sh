@@ -141,7 +141,7 @@ then
    exit 1
 fi
 
-gothub upload --tag $TAG --name $BE_PROJECT --file $GOPATH/bin/$BE_PROJECT --replace
+gothub upload --tag $TAG --name $BE_PROJECT --file ./$BE_PROJECT --replace
 
 mkdir -p tmp
 rm -f tmp/$BE_PROJECT
@@ -156,3 +156,7 @@ then
 fi
 
 rm tmp/$BE_PROJECT
+
+# Publish forjj as an image.
+
+docker push forjdevops/forjj:latest

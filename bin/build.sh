@@ -16,4 +16,6 @@ glide i
 
 # Requires forjj to be static.
 export CGO_ENABLED=0
-go install
+go build
+
+$BUILD_ENV_DOCKER build -t forjdevops/forjj .
