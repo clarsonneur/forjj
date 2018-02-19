@@ -108,6 +108,7 @@ const (
 )
 
 const (
+	infra_maintain_volumename = "infra-maintain-volumename" // Volume name to store workspace data
 	infra_path_f     = "infra-path"        // Path where infra repository gets cloned.
 	infra_name_f     = "infra-name"        // Name of the infra repository in upstream system
 	infra_upstream_f = "infra-upstream"    // Name of the infra upstream service instance name (github for example)
@@ -169,6 +170,7 @@ func (a *Forj) init() {
 	opts_creds_file := cli.Opts().Short('C')
 	opts_orga_name := cli.Opts().Short('O')
 	opts_infra_path := cli.Opts().Envar("FORJJ_INFRA").Short('W')
+	opts_infra_vol := cli.Opts().Default("<organization>-infra-maintain-volume")
 	opts_forjfile := cli.Opts().Short('F').Default(".")
 	opts_message := cli.Opts().Short('m')
 
@@ -332,12 +334,14 @@ func (a *Forj) init() {
 	if a.cli.NewObject(infra, "the global settings", "internal").
 		Single().
 		AddField(cli.String, infra_name_f, forjj_infra_name_help, "#w", nil).
+		AddField(cli.String, infra_maintain_volumename, infra_maintain_vol_help, "#w", nil).
 		AddField(cli.String, infra_upstream_f, forjj_infra_upstream_help, "#w", nil).
 		AddField(cli.String, "flow", default_flow_help, "#w", nil).
 		AddField(cli.String, message_f, create_message_help, "#w", opts_message).
 		DefineActions(chg_act).
 		OnActions().
 		AddFlag(infra_name_f, opts_infra_repo).
+		AddFlag(infra_maintain_volumename, opts_infra_vol).
 		AddFlag(infra_upstream_f, nil).
 		AddFlag(message_f, nil).
 		AddFlag("flow", nil) == nil {
@@ -396,6 +400,7 @@ func (a *Forj) init() {
 	// Add Forjfile/cli mapping for simple forj data getter
 	a.AddMap(orga_f, workspace, "", orga_f, "settings", "", orga_f)
 	a.AddMap(infra_name_f, infra, "", infra_name_f, infra, "", "name")
+	a.AddMap(infra_maintain_volumename, infra, "", infra_maintain_volumename, infra, "", "maintain-data-volume")
 	a.AddMap(infra_upstream_f, infra, "", infra_upstream_f, infra, "", "apps:upstream")
 	a.AddMap(infra_path_f, workspace, "", infra_path_f, workspace, "", infra_path_f)
 	// TODO: Add git-remote cli mapping

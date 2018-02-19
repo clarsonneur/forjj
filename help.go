@@ -26,6 +26,7 @@ But FORJJ is not DevOps if you do not help your teams to do DevOps (DevOps Cultu
 	create_forjfile_help    = "Create your Forge from a Forjfile path. Default is ."
 	create_message_help     = "Commit message to apply."
 
+	infra_maintain_vol_help = "Docker volume name or path used to store forjj workspace data. (.forjj-workspace)"
 	infra_path_help         = "Path to your Forge infra repository. You can set it through FORJJ_INFRA as well."
 	docker_exe_path_help    = "Path to a static docker binary used when a forjj plugin service container requires DooD (Docker out of Docker) capability."
 	contribs_repo_help      = "Set a local forjj-contribs directory like or a github like url for FORJJ plugins. You can set CONTRIBS_REPO as env."

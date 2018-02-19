@@ -170,8 +170,9 @@ func (a *Forj) set_infra_name(action string) (err error) {
 	// Setting default if the organization is defined.
 	if a.w.Organization != "" {
 		// Set the 'infra' default flag value in cli
-		a.cli.GetObject(infra).
-			SetParamOptions(infra_name_f, cli.Opts().Default(fmt.Sprintf("%s-infra", a.w.Organization)))
+		infra:= a.cli.GetObject(infra)
+		infra.SetParamOptions(infra_name_f, cli.Opts().Default(fmt.Sprintf("%s-infra", a.w.Organization)))
+		infra.SetParamOptions(infra_maintain_volumename, cli.Opts().Default(fmt.Sprintf("%s-infra-maintain-volume", a.w.Organization)))
 	}
 
 	var infra_name string
@@ -204,6 +205,7 @@ func (a *Forj) set_infra_name(action string) (err error) {
 		// Use the default setting.
 		a.w.Infra.Name = fmt.Sprintf("%s-infra", a.w.Organization)
 		err = a.SetPrefs(infra_name_f, a.w.Infra.Name) // Forjfile update
+		err = a.SetPrefs(infra_maintain_volumename, a.w.Infra.Name + "-maintain-volume") // Forjfile update
 	}
 	return err
 }
