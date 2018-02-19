@@ -34,7 +34,7 @@ type ForgeYaml struct {
 	// LocalSettings should not be used from a Forjfile except if this one is a template one.
 	LocalSettings WorkspaceStruct `yaml:"local-settings,omitempty"` // ignored if Normal Forjfile
 	ForjSettings ForjSettingsStruct `yaml:"forj-settings"`
-	Infra *RepoStruct
+	Infra *InfraStruct
 	Repos ReposStruct `yaml:"repositories"`
 	Apps AppsStruct `yaml:"applications"`
 	Users map[string]*UserStruct
@@ -131,11 +131,18 @@ func (f *Forge)SetInfraAsRepo() {
 
 	if r, found_repo := f.yaml.Repos[f.yaml.Infra.name]; found_repo {
 		repo = r
+		gotrace.Warning("The infra repository is defined in Repositories. " +
+			"Forjj copy each repo data to the infra section if the related data does not exist in the infra section." +
+			" We strongly suggest you to avoid declaring the infra repository in Repositories and set it in infra " +
+			"section instead.\n" +
+			"This behavior may be removed in the future.")
 	}
 	if repo == nil {
 		repo = new(RepoStruct)
 		f.yaml.Repos[f.yaml.Infra.name] = repo
 	}
+	// TODO: remove COPY to Infra section
+	repo.setToInfra(f.yaml.Infra)
 	repo.setFromInfra(f.yaml.Infra)
 }
 
@@ -222,7 +229,7 @@ func (f *Forge)Init() bool {
 		f.yaml = new(ForgeYaml)
 	}
 	if f.yaml.Infra == nil {
-		f.yaml.Infra = new(RepoStruct)
+		f.yaml.Infra = new(InfraStruct)
 	}
 	if f.yaml.Infra.More == nil {
 		f.yaml.Infra.More = make(map[string]string)
@@ -779,7 +786,7 @@ func (f *ForgeYaml)set_defaults() {
 			f.Groups[name] = group
 		}
 	}
-	if f.Infra == nil { f.Infra = new(RepoStruct) }
+	if f.Infra == nil { f.Infra = new(InfraStruct) }
 	f.Infra.set_forge(f)
 	f.ForjSettings.set_forge(f)
 }

@@ -11,6 +11,7 @@ import (
 type RepoStruct struct {
 	name         string
 	is_infra     bool
+	infra        *InfraStruct
 	forge        *ForgeYaml
 	owner        string
 	driverOwner  *drivers.Driver
@@ -60,22 +61,47 @@ func (r *RepoStruct)Owner() string {
 	return r.owner
 }
 
-func (r *RepoStruct)setFromInfra(infra *RepoStruct) {
+func (r *RepoStruct)setFromInfra(infra *InfraStruct) {
 	if r == nil {
 		return
 	}
-	*r = *infra
+	*r = infra.RepoStruct
 	delete(r.More, "name")
 	r.is_infra = true
+	r.infra = infra
 }
 
-func (r *RepoStruct)setToInfra(infra *RepoStruct) {
+// setToInfra Copy each repo information to the infra, if each related infra data is not set.
+func (r *RepoStruct)setToInfra(infra *InfraStruct) {
 	if r == nil {
 		return
 	}
 
-	*infra = *r
-	infra.is_infra = false // Unset it to ensure data is saved in yaml
+	if infra.Title == "" {
+		infra.Title = r.Title
+	}
+	if infra.Upstream == "" {
+		infra.Upstream = r.Upstream
+	}
+	if infra.GitRemote == "" {
+		infra.GitRemote = r.GitRemote
+	}
+	if infra.RepoTemplate== "" {
+		infra.RepoTemplate = r.RepoTemplate
+	}
+	if infra.Flow.Name == "" {
+		infra.Flow.Name = r.Flow.Name
+	}
+	for app_name, app := range r.Apps {
+		if v, found := infra.Apps[app_name] ; ! found || v == "" {
+			infra.Apps[app_name] = app
+		}
+	}
+	for key, value := range r.More {
+		if v, found := infra.More[key]; ! found || v == "" {
+			infra.Apps[key] = value
+		}
+	}
 }
 
 func (r *RepoStruct)GetString(field string) (string) {
